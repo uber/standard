@@ -11,10 +11,10 @@ var glob = require('glob')
 var parallel = require('run-parallel')
 var path = require('path')
 var uniq = require('uniq')
+var cloneDeep = require('clone-deep')
 
 var DEFAULT_PATTERNS = [
-  '**/*.js',
-  '**/*.jsx'
+  '**/*.js'
 ]
 
 var DEFAULT_IGNORE_PATTERNS = [
@@ -24,9 +24,31 @@ var DEFAULT_IGNORE_PATTERNS = [
   '**/bundle.js'
 ]
 
+var es6Config = require(path.join(__dirname, 'rc', '.eslintrc.es6.json'))
+
 var ESLINT_CONFIG = {
   baseConfig: require(path.join(__dirname, 'rc', '.eslintrc.json')),
   useEslintrc: true
+}
+
+function configure(opts) {
+  var config = cloneDeep(ESLINT_CONFIG)
+
+  config.baseConfig.rules.indent = [2, opts.indent]
+
+  if (opts['line-length']) {
+    config.baseConfig.rules['max-len'] = [2, opts['line-length'], 4]
+  }
+
+  if (opts.es6) {
+    config.baseConfig.ecmaFeatures = es6Config.ecmaFeatures
+
+    Object.keys(es6Config.rules).forEach(function onRule(ruleName) {
+      config.baseConfig.rules[ruleName] = es6Config.rules[ruleName]
+    })
+  }
+
+  return config;
 }
 
 /**
@@ -48,10 +70,10 @@ function lintText (text, opts, cb) {
 
   editorConfigGetIndent(process.cwd(), function (err, indent) {
     if (err) return cb(err)
-    ESLINT_CONFIG.baseConfig.rules.indent = [2, indent]
+    opts.indent = indent;
     var result
     try {
-      result = new eslint.CLIEngine(ESLINT_CONFIG).executeOnText(text)
+      result = new eslint.CLIEngine(configure(opts)).executeOnText(text)
     } catch (err) {
       return cb(err)
     }
@@ -120,10 +142,10 @@ function lintFiles (files, opts, cb) {
     var root = commondir(files)
     editorConfigGetIndent(root, function (err, indent) {
       if (err) return cb(err)
+      opts.indent = indent
       var result
-      ESLINT_CONFIG.baseConfig.rules.indent = [2, indent]
       try {
-        result = new eslint.CLIEngine(ESLINT_CONFIG).executeOnFiles(files)
+        result = new eslint.CLIEngine(configure(opts)).executeOnFiles(files)
       } catch (err) {
         return cb(err)
       }
