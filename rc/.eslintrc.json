@@ -286,7 +286,6 @@
                 "initialized": "never"
             }
         ],
-        "one-var": [2, "never"],
         "operator-assignment": [
             0,
             "always"
