@@ -227,7 +227,7 @@
             2,
             "^(err|error|anySpecificError)$"
         ],
-        "indent": [2, 4],
+        "indent": [2, 2],
         "key-spacing": [
             2,
             {
