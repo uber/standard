@@ -12,6 +12,7 @@ var parallel = require('run-parallel')
 var path = require('path')
 var uniq = require('uniq')
 var cloneDeep = require('clone-deep')
+var chdir = require('chdir')
 
 var DEFAULT_PATTERNS = [
   '**/*.js'
@@ -32,7 +33,7 @@ var ESLINT_CONFIG = {
   rulePaths: [path.join(__dirname, 'rules')]
 }
 
-function configure(opts) {
+function configure (opts) {
   var config = cloneDeep(ESLINT_CONFIG)
 
   config.baseConfig.rules.indent = [2, opts.indent]
@@ -44,12 +45,12 @@ function configure(opts) {
   if (opts.es6) {
     config.baseConfig.ecmaFeatures = es6Config.ecmaFeatures
 
-    Object.keys(es6Config.rules).forEach(function onRule(ruleName) {
+    Object.keys(es6Config.rules).forEach(function onRule (ruleName) {
       config.baseConfig.rules[ruleName] = es6Config.rules[ruleName]
     })
   }
 
-  return config;
+  return config
 }
 
 /**
@@ -69,12 +70,14 @@ function lintText (text, opts, cb) {
   opts = parseOpts(opts)
   cb = dezalgo(cb)
 
-  editorConfigGetIndent(process.cwd(), function (err, indent) {
+  editorConfigGetIndent(opts.cwd, function (err, indent) {
     if (err) return cb(err)
     opts.indent = indent
     var result
     try {
-      result = new eslint.CLIEngine(configure(opts)).executeOnText(text)
+      chdir(opts.cwd, function () {
+        result = new eslint.CLIEngine(configure(opts)).executeOnText(text)
+      })
     } catch (err) {
       return cb(err)
     }

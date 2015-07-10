@@ -16,6 +16,7 @@
     "url": "https://github.com/feross/standard/issues"
   },
   "dependencies": {
+    "chdir": "0.0.0",
     "clone-deep": "^0.1.1",
     "commondir": "^1.0.1",
     "dezalgo": "^1.0.1",
