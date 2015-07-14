@@ -75,9 +75,9 @@ function lintText (text, opts, cb) {
     opts.indent = indent
     var result
     try {
-      chdir(opts.cwd, function () {
-        result = new eslint.CLIEngine(configure(opts)).executeOnText(text)
-      })
+      chdir.push(opts.cwd)
+      result = new eslint.CLIEngine(configure(opts)).executeOnText(text)
+      chdir.pop()
     } catch (err) {
       return cb(err)
     }
