@@ -69,7 +69,7 @@ function lintText (text, opts, cb) {
   opts = parseOpts(opts)
   cb = dezalgo(cb)
 
-  editorConfigGetIndent(process.cwd(), function (err, indent) {
+  editorConfigGetIndent(opts.cwd, function (err, indent) {
     if (err) return cb(err)
     opts.indent = indent
     var result
