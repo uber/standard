@@ -234,6 +234,22 @@ git diff --name-only --cached --relative | grep '\.js$' | xargs standard
 exit $?
 ```
 
+### File names
+
+file names should be lowercase, with dashes (`-`) seperating words. ie.,
+
+Good
+
+`my-thing-that-does-stuff.js`
+
+Bad
+
+`MyThingThatDoesStuff.js`
+`THAT_THING.js`
+`thatOtherThing.js`
+
+
+
 ## TODO
 
  - Port over the `"disallowKeywords"` feature to eslint.
