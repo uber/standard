@@ -49,6 +49,10 @@ function configure(opts) {
     deepExtend(config.baseConfig, es6Config, babelConfig)
   }
 
+  if (opts.fix) {
+    config.fix = true;
+  }
+
   return config;
 }
 
@@ -147,6 +151,11 @@ function lintFiles (files, opts, cb) {
       opts.indent = indent
       try {
         result = new eslint.CLIEngine(configure(opts)).executeOnFiles(files)
+
+        if (opts.fix) {
+           eslint.CLIEngine.outputFixes(result);
+        }
+
       } catch (err) {
         return cb(err)
       }
