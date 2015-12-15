@@ -93,6 +93,10 @@ if (argv.es6) {
   lintOpts.babel = true
 }
 
+if (argv['fix']) {
+  lintOpts.fix = true;
+}
+
 if (argv.stdin) {
   editorConfigGetIndent(process.cwd(), function (err, indent) {
     if (err) return onError(err)
